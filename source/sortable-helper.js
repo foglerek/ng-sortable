@@ -196,6 +196,48 @@
             }
           }
 
+          // Scroll (Ugly Hack for now)
+          var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+          var elementRect = element[0].getBoundingClientRect();
+          var bottomBound = elementRect.top + elementRect.height;
+          var topBound    = element.y - scrollTop + elementRect.height;
+          var wait;
+
+          if ( topBound < 0) {
+            wait = false;
+            (function scroller() {
+              if ( ! wait) {
+                elementRect = element[0].getBoundingClientRect();
+                topBound = elementRect.top - elementRect.height;
+                window.scrollBy(0, -3);
+                wait = true;
+                setTimeout(function() {
+                  wait = false;
+                  if ( topBound < 0) {
+                    scroller();
+                  }
+                }, 30);
+              }
+            })();
+          } else if ( bottomBound > window.innerHeight) {
+            wait = false;
+            (function scroller() {
+              if ( ! wait) {
+                elementRect = element[0].getBoundingClientRect();
+                bottomBound = elementRect.top + elementRect.height;
+                window.scrollBy(0, 3);
+                wait = true;
+                setTimeout(function() {
+                  wait = false;
+                  if ( bottomBound > window.innerHeight) {
+                    scroller();
+                  }
+                }, 30);
+              }
+            })();
+          }
+
+
           element.css({
             'left': element.x + 'px',
             'top': element.y + 'px'
